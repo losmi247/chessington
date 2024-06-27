@@ -13,11 +13,9 @@ export default class Rook extends Piece {
         let moves = new Array(0);
 
         for (let i = 0; i < 8; i++) {
-            //Horizontal
             if (i !== square.col) {
                 moves.push(new Square(square.row, i));
             }
-            //Vertical
             if (i !== square.row) {
                 moves.push(new Square(i, square.col));
             }
