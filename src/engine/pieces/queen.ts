@@ -13,7 +13,7 @@ export default class Queen extends Piece {
     public getAvailableMoves(board: Board) {
         let currentSquare = board.findPiece(this);
 
-        let diagonalSquares = board.getDiagonalSquares(currentSquare);
+        let diagonalSquares = board.getReachableDiagonalSquares(currentSquare);
         let rowAndColumnSquares = board.getReachableLateralSquares(currentSquare);
 
         return diagonalSquares.concat(rowAndColumnSquares);
