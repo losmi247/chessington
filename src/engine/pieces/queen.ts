@@ -13,14 +13,10 @@ export default class Queen extends Piece {
     public getAvailableMoves(board: Board) {
         let currentSquare = board.findPiece(this);
 
-        let dummyBishop = new Bishop(this.player);
-        board.setPiece(currentSquare, dummyBishop);
-        let bishopMoves = dummyBishop.getAvailableMoves(board);
+        let diagonalSquares = Square.getDiagonalSquares(currentSquare);
+        let rowAndColumnSquares = Square.getRowAndColumnSquares(currentSquare);
+        let availableMoves = diagonalSquares.concat(rowAndColumnSquares);
 
-        let dummyRook = new Rook(this.player);
-        board.setPiece(currentSquare, dummyRook);
-        let rookMoves = dummyRook.getAvailableMoves(board);
-
-        return bishopMoves.concat(rookMoves);
+        return availableMoves.filter((s: Square) => s.col >= 0 && s.col <= 7 && s.row >= 0 && s.row <= 7);
     }
 }
