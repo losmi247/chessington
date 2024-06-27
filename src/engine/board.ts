@@ -2,6 +2,7 @@ import Player from './player';
 import GameSettings from './gameSettings';
 import Square from './square';
 import Piece from './pieces/piece';
+import * as path from "node:path";
 
 export default class Board {
     public currentPlayer: Player;
@@ -44,28 +45,118 @@ export default class Board {
         }
     }
 
-    public getDiagonalSquares(square: Square) {
-        let diagonalSquares = new Array(0);
+    public getReachableDiagonalSquares(currentSquare: Square) {
+        /// major diagonals are e.g. (0,0) to (7,7)
+        let majorDiagonalSquares = new Array(0);
         for (let i = 1; i < this.board.length; i++) {
-            diagonalSquares.push(new Square(square.row - i, square.col - i));
-            diagonalSquares.push(new Square(square.row + i, square.col - i));
-            diagonalSquares.push(new Square(square.row - i, square.col + i));
-            diagonalSquares.push(new Square(square.row + i, square.col + i));
+            majorDiagonalSquares.push(new Square(currentSquare.row - i, currentSquare.col - i));
+            majorDiagonalSquares.push(new Square(currentSquare.row + i, currentSquare.col + i));
         }
-        return diagonalSquares.filter((square: Square) => this.isSquareValid(square));
+        let reachableMajorDiagonalSquares = majorDiagonalSquares.filter((square: Square) =>
+            this.isSquareValid(square) && this.isMajorDiagonalPathClear(currentSquare, square)
+        );
+
+        /// minor diagonals are e.g. (0,7) to (7,0)
+        let minorDiagonalSquares = new Array(0);
+        for (let i = 1; i < this.board.length; i++) {
+            minorDiagonalSquares.push(new Square(currentSquare.row - i, currentSquare.col + i));
+            minorDiagonalSquares.push(new Square(currentSquare.row + i, currentSquare.col - i));
+        }
+        let reachableMinorDiagonalSquares = minorDiagonalSquares.filter((square: Square) =>
+            this.isSquareValid(square) && this.isMinorDiagonalPathClear(currentSquare, square)
+        );
+
+        return reachableMajorDiagonalSquares.concat(reachableMinorDiagonalSquares);
     }
 
-    public getRowAndColumnSquares(square: Square) {
-        let rowAndColumnSquares = new Array(0);
+    public getReachableRowSquares(currentSquare: Square) {
+        let rowSquares = new Array(0);
         for (let i = 0; i < this.board.length; i++) {
-            if (i !== square.col) {
-                rowAndColumnSquares.push(new Square(square.row, i));
-            }
-            if (i !== square.row) {
-                rowAndColumnSquares.push(new Square(i, square.col));
+            if (i !== currentSquare.col) {
+                rowSquares.push(new Square(currentSquare.row, i));
             }
         }
-        return rowAndColumnSquares;
+        return rowSquares.filter((square) => this.isHorizontalPathClear(currentSquare, square));
+    }
+
+    public getReachableColSquares(currentSquare: Square) {
+        let colSquares = new Array(0);
+        for (let i = 0; i < this.board.length; i++) {
+            if (i !== currentSquare.row) {
+                colSquares.push(new Square(i, currentSquare.col));
+            }
+        }
+        return colSquares.filter((square) => this.isVerticalPathClear(currentSquare, square));
+    }
+
+    public getReachableLateralSquares(currentSquare: Square) {
+        return this.getReachableRowSquares(currentSquare).concat(this.getReachableColSquares(currentSquare));
+    }
+
+    private isSquareAvailable(row: number, col: number) {
+        return this.board[row][col] === undefined;
+    }
+
+    public isVerticalPathClear(start: Square, end: Square) {
+        let direction = start.row > end.row ? -1 : 1;
+
+        let pathStartRow = start.row + direction;
+        let pathEndRow = end.row;
+
+        for (let row = pathStartRow; row !== pathEndRow + direction; row += direction) {
+            if (!this.isSquareAvailable(row, start.col)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public isHorizontalPathClear(start: Square, end: Square) {
+        let direction = start.col > end.col ? -1 : 1;
+
+        let pathStartCol = start.col + direction;
+        let pathEndCol = end.col;
+
+        for (let col = pathStartCol; col !== pathEndCol + direction; col += direction) {
+            if (!this.isSquareAvailable(start.row, col)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public isMajorDiagonalPathClear(start: Square, end: Square) {
+        let direction = start.row > end.row ? -1 : 1;
+
+        let row = start.row + direction, col = start.col + direction;
+        while(row != end.row + direction) {
+            if (!this.isSquareAvailable(row, col)) {
+                return false;
+            }
+
+            row += direction;
+            col += direction;
+        }
+
+        return true;
+    }
+
+    public isMinorDiagonalPathClear(start: Square, end: Square) {
+        let direction = start.row > end.row ? -1 : 1;
+
+        let row = start.row + direction, col = start.col + direction;
+        while(row != end.row + direction) {
+            if (!this.isSquareAvailable(row, col)) {
+                return false;
+            }
+
+            row += direction;
+            col -= direction;
+        }
+
+        return true;
     }
 
     private createBoard() {
@@ -75,4 +166,5 @@ export default class Board {
         }
         return board;
     }
+
 }
