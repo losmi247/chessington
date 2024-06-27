@@ -2,6 +2,7 @@ import Player from './player';
 import GameSettings from './gameSettings';
 import Square from './square';
 import Piece from './pieces/piece';
+import * as path from "node:path";
 
 export default class Board {
     public currentPlayer: Player;
@@ -68,6 +69,26 @@ export default class Board {
         return rowAndColumnSquares;
     }
 
+    private isSquareAvailable(row: number, col: number) {
+        return this.board[row][col] === undefined;
+    }
+
+    public isVerticalPathClear(start: Square, end: Square) {
+        let direction = start.row > end.row ? -1 : 1;
+
+        let pathStartRow = start.row + direction;
+        let pathEndRow = end.row;
+
+        for (let row = pathStartRow; row !== pathEndRow + direction; row += direction) {
+            if (!this.isSquareAvailable(row, start.col)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
     private createBoard() {
         const board = new Array(GameSettings.BOARD_SIZE);
         for (let i = 0; i < board.length; i++) {
@@ -75,4 +96,5 @@ export default class Board {
         }
         return board;
     }
+
 }

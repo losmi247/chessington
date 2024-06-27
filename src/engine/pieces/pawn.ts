@@ -18,6 +18,6 @@ export default class Pawn extends Piece {
         }
         availableMoves.push(new Square(currentSquare.row + playerDirection, currentSquare.col));
 
-        return availableMoves;
+        return availableMoves.filter((square: Square) => board.isVerticalPathClear(currentSquare, square));
     }
 }
