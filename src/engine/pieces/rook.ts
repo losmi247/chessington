@@ -10,6 +10,6 @@ export default class Rook extends Piece {
 
     public getAvailableMoves(board: Board) {
         let currentSquare = board.findPiece(this);
-        return Square.getRowAndColumnSquares(currentSquare);
+        return board.getRowAndColumnSquares(currentSquare);
     }
 }

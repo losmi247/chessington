@@ -40,6 +40,30 @@ export default class Board {
         }
     }
 
+    public getDiagonalSquares(square: Square) {
+        let diagonalSquares = new Array(0);
+        for (let i = 1; i < this.board.length; i++) {
+            diagonalSquares.push(new Square(square.row - i, square.col - i));
+            diagonalSquares.push(new Square(square.row + i, square.col - i));
+            diagonalSquares.push(new Square(square.row - i, square.col + i));
+            diagonalSquares.push(new Square(square.row + i, square.col + i));
+        }
+        return diagonalSquares;
+    }
+
+    public getRowAndColumnSquares(square: Square) {
+        let rowAndColumnSquares = new Array(0);
+        for (let i = 0; i < this.board.length; i++) {
+            if (i !== square.col) {
+                rowAndColumnSquares.push(new Square(square.row, i));
+            }
+            if (i !== square.row) {
+                rowAndColumnSquares.push(new Square(i, square.col));
+            }
+        }
+        return rowAndColumnSquares;
+    }
+
     private createBoard() {
         const board = new Array(GameSettings.BOARD_SIZE);
         for (let i = 0; i < board.length; i++) {

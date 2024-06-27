@@ -13,10 +13,10 @@ export default class Queen extends Piece {
     public getAvailableMoves(board: Board) {
         let currentSquare = board.findPiece(this);
 
-        let diagonalSquares = Square.getDiagonalSquares(currentSquare);
-        let rowAndColumnSquares = Square.getRowAndColumnSquares(currentSquare);
+        let diagonalSquares = board.getDiagonalSquares(currentSquare);
+        let rowAndColumnSquares = board.getRowAndColumnSquares(currentSquare);
         let availableMoves = diagonalSquares.concat(rowAndColumnSquares);
 
-        return availableMoves.filter((s: Square) => s.col >= 0 && s.col <= 7 && s.row >= 0 && s.row <= 7);
+        return availableMoves.filter((square: Square) => square.isValid());
     }
 }
