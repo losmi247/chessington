@@ -56,18 +56,31 @@ export default class Board {
         return diagonalSquares.filter((square: Square) => this.isSquareValid(square));
     }
 
-    public getRowAndColumnSquares(square: Square) {
-        let rowAndColumnSquares = new Array(0);
+    public getReachableRowSquares(currentSquare: Square) {
+        let rowSquares = new Array(0);
         for (let i = 0; i < this.board.length; i++) {
-            if (i !== square.col) {
-                rowAndColumnSquares.push(new Square(square.row, i));
-            }
-            if (i !== square.row) {
-                rowAndColumnSquares.push(new Square(i, square.col));
+            if (i !== currentSquare.col) {
+                rowSquares.push(new Square(currentSquare.row, i));
             }
         }
-        return rowAndColumnSquares;
+        return rowSquares.filter((square) => this.isHorizontalPathClear(currentSquare, square));
     }
+
+    public getReachableColSquares(currentSquare: Square) {
+        let colSquares = new Array(0);
+        for (let i = 0; i < this.board.length; i++) {
+            if (i !== currentSquare.row) {
+                colSquares.push(new Square(i, currentSquare.col));
+            }
+        }
+        return colSquares.filter((square) => this.isVerticalPathClear(currentSquare, square));
+    }
+
+    public getReachableLateralSquares(currentSquare: Square) {
+        return this.getReachableRowSquares(currentSquare).concat(this.getReachableColSquares(currentSquare));
+    }
+
+
 
     private isSquareAvailable(row: number, col: number) {
         return this.board[row][col] === undefined;
@@ -87,6 +100,22 @@ export default class Board {
 
         return true;
     }
+
+    public isHorizontalPathClear(start: Square, end: Square) {
+        let direction = start.col > end.col ? -1 : 1;
+
+        let pathStartCol = start.col + direction;
+        let pathEndCol = end.col;
+
+        for (let col = pathStartCol; col !== pathEndCol + direction; col += direction) {
+            if (!this.isSquareAvailable(start.row, col)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 
 
     private createBoard() {
