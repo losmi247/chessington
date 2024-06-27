@@ -20,6 +20,10 @@ export default class Board {
         return this.board[square.row][square.col];
     }
 
+    public isSquareValid(square: Square) {
+        return square.col >= 0 && square.col < this.board.length && square.row >= 0 && square.row < this.board.length;
+    }
+
     public findPiece(pieceToFind: Piece) {
         for (let row = 0; row < this.board.length; row++) {
             for (let col = 0; col < this.board[row].length; col++) {
@@ -48,7 +52,7 @@ export default class Board {
             diagonalSquares.push(new Square(square.row - i, square.col + i));
             diagonalSquares.push(new Square(square.row + i, square.col + i));
         }
-        return diagonalSquares;
+        return diagonalSquares.filter((square: Square) => this.isSquareValid(square));
     }
 
     public getRowAndColumnSquares(square: Square) {

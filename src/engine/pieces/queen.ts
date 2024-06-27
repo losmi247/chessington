@@ -15,8 +15,7 @@ export default class Queen extends Piece {
 
         let diagonalSquares = board.getDiagonalSquares(currentSquare);
         let rowAndColumnSquares = board.getRowAndColumnSquares(currentSquare);
-        let availableMoves = diagonalSquares.concat(rowAndColumnSquares);
 
-        return availableMoves.filter((square: Square) => square.isValid());
+        return diagonalSquares.concat(rowAndColumnSquares);
     }
 }

@@ -11,10 +11,6 @@ export default class Square {
         return new Square(row, col);
     }
 
-    public isValid() {
-        return this.col >= 0 && this.col <= 7 && this.row >= 0 && this.row <= 7;
-    }
-
     public equals(otherSquare: Square) {
         return !!otherSquare && this.row === otherSquare.row && this.col === otherSquare.col;
     }

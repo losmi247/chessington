@@ -25,6 +25,6 @@ export default class King extends Piece {
             }
         }
 
-        return availableMoves.filter((square: Square) => square.isValid());
+        return availableMoves.filter((square: Square) => board.isSquareValid(square));
     }
 }
